@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name="TB_USER_FOLLOW")
 public class UserFollow {
+
     @Id
     @PrimaryKeyJoinColumn
     @GeneratedValue(generator = "uuid")

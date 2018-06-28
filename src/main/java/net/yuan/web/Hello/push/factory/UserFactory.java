@@ -6,6 +6,20 @@ import net.yuan.web.Hello.push.utils.TextUtil;
 import org.hibernate.Session;
 
 public class UserFactory {
+
+    public static User findUserByPhone(String phone){
+        return Hib.query(session -> (User) session
+                .createQuery("from User where phone=:inphone")
+                .setParameter("inphone",phone)
+                .uniqueResult());
+    }
+
+    public static User findUserByName(String name){
+        return Hib.query(session -> (User) session
+                .createQuery("from User where name=:name")
+                .setParameter("name",name)
+                .uniqueResult());
+    }
     /**
      * 用户注册
      * 注册的操作需要写入数据库，并返回数据库中的User信息

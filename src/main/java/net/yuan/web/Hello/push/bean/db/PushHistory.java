@@ -10,13 +10,9 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name="TB_PUSH_HISTORY")
 public class PushHistory {
-
-    //主键
     @Id
     @PrimaryKeyJoinColumn
-    //主键生成存储的类型
     @GeneratedValue(generator = "uuid")
-    // 把uuid的生成器定义为uuid2，uuid2是常规的UUID toString
     @GenericGenerator(name="uuid",strategy = "uuid2")
     @Column(updatable = false,nullable = false)
     private String id;

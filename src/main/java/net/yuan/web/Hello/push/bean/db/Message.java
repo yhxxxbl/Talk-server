@@ -14,7 +14,7 @@ public class Message {
     public static final int TYPE_PIC=2;//图片类型
     public static final int TYPE_FILE=3;//文件类型
     public static final int TYPE_AUDIO=4;//语音类型
-    //主键
+
     @Id
     @PrimaryKeyJoinColumn
     //主键生成存储的类型

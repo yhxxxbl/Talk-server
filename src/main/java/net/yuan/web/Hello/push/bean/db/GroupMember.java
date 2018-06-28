@@ -1,4 +1,7 @@
 package net.yuan.web.Hello.push.bean.db;
+/**
+ * 群成员表
+ */
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
@@ -18,12 +21,9 @@ public class GroupMember {
     public static final int NOTIFY_LEVER_CLOSE =0;  //接收消息不提示（群消息免打扰）
     public static final int NOTIFY_LEVER_NONE = 1; //默认通知级别
 
-    //主键
     @Id
     @PrimaryKeyJoinColumn
-    //主键生成存储的类型
     @GeneratedValue(generator = "uuid")
-    // 把uuid的生成器定义为uuid2，uuid2是常规的UUID toString
     @GenericGenerator(name="uuid",strategy = "uuid2")
     @Column(updatable = false,nullable = false)
     private String id;
