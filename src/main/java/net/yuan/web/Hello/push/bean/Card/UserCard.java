@@ -1,6 +1,7 @@
 package net.yuan.web.Hello.push.bean.Card;
 
 import com.google.gson.annotations.Expose;
+import net.yuan.web.Hello.push.bean.db.User;
 
 import java.time.LocalDateTime;
 
@@ -25,6 +26,16 @@ public class UserCard {
     private int following;//用户关注人的数量
     @Expose
     private boolean isFollow;
+
+    public UserCard(final User user){
+        this.id=user.getId();
+        this.name=user.getName();
+        this.phone=user.getPhone();
+        this.portrait=user.getPortrait();
+        this.desc=user.getDescription();
+        this.sex=user.getSex();
+        this.modiftAt=user.getUpdateAt();
+    }
 
     public String getId() {
         return id;
