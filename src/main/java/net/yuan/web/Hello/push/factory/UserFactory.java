@@ -11,26 +11,36 @@ import java.util.UUID;
 
 public class UserFactory {
     //通过token找到User
-    public static User findTokenByPhone(String token){
+    public static User findTokenByPhone(String token) {
         return Hib.query(session -> (User) session
                 .createQuery("from User where token=:token")
-                .setParameter("token",token)
+                .setParameter("token", token)
                 .uniqueResult());
     }
+
     //通过pHone找到User
-    public static User findUserByPhone(String phone){
+    public static User findUserByPhone(String phone) {
         return Hib.query(session -> (User) session
                 .createQuery("from User where phone=:inphone")
-                .setParameter("inphone",phone)
+                .setParameter("inphone", phone)
                 .uniqueResult());
     }
-//通过name找到User
-    public static User findUserByName(String name){
+
+    //通过name找到User
+    public static User findUserByName(String name) {
         return Hib.query(session -> (User) session
                 .createQuery("from User where name=:name")
-                .setParameter("name",name)
+                .setParameter("name", name)
                 .uniqueResult());
     }
+
+    public static User update(User user) {
+        return Hib.query(session -> {
+            session.saveOrUpdate(user);
+            return user;
+        });
+    }
+
     //给当前的账户绑定pushId
     public static User bindPushId(User user, String pushId) {
         if (Strings.isNullOrEmpty(pushId))
@@ -67,28 +77,28 @@ public class UserFactory {
             }
 
             // 更新新的设备Id
-            return  Hib.query(session -> {
-                session.saveOrUpdate(user);
-                return user;
-            });
+            user.setPushId(pushId);
+            return update(user);
         }
     }
-//使用账户密码进行登录
-    public static User login(String account,String password){
-       final String accountStr=account.trim();
+
+    //使用账户密码进行登录
+    public static User login(String account, String password) {
+        final String accountStr = account.trim();
         //密码存储时采用了加密操作，当寻找时也要进行同样的操作，才能匹配
-      final   String encodePassword=encodePassword(password);
-        User user=Hib.query(session -> (User) session
-                  .createQuery("from User where phone=:phone and password=:password")
-                  .setParameter("phone",accountStr)
-                  .setParameter("password",encodePassword)
-                  .uniqueResult());
-        if (user!=null){
+        final String encodePassword = encodePassword(password);
+        User user = Hib.query(session -> (User) session
+                .createQuery("from User where phone=:phone and password=:password")
+                .setParameter("phone", accountStr)
+                .setParameter("password", encodePassword)
+                .uniqueResult());
+        if (user != null) {
             //对User进行登陆然后返回
-            user=login(user);
+            user = login(user);
         }
         return user;
     }
+
     /**
      * 用户注册
      * 注册的操作需要写入数据库，并返回数据库中的User信息
@@ -100,26 +110,27 @@ public class UserFactory {
      */
     public static User register(String account, String password, String name) {
         //去除账户中的首位空格
-        account=account.trim();
+        account = account.trim();
         //对密码进行加密
-        password=encodePassword(password);//处理密码
+        password = encodePassword(password);//处理密码
 
-        User user = createUser(account,password,name);
+        User user = createUser(account, password, name);
         user.setName(name);
-        if (user!=null){
-            user=login(user);
+        if (user != null) {
+            user = login(user);
         }
         return user;
     }
 
     /**
      * 注册时的新建账户方法
+     *
      * @param account  手机
-     * @param password  加密后的密码
-     * @param name  用户名
-     * @return  返回一个用户
+     * @param password 加密后的密码
+     * @param name     用户名
+     * @return 返回一个用户
      */
-    private static User createUser(String account,String password,String name){
+    private static User createUser(String account, String password, String name) {
         User user = new User();
         user.setName(name);
         user.setPassword(password);
@@ -134,29 +145,28 @@ public class UserFactory {
 
     /**
      * 登陆操作  本质上是对Token进行操作
+     *
      * @param user
      * @return
      */
-    private static User login(User user){
+    private static User login(User user) {
         //使用一个随机的UUIOD值充当token
-        String newToken= UUID.randomUUID().toString();
+        String newToken = UUID.randomUUID().toString();
         //进行一次base64格式化
-        newToken=TextUtil.encodeBase64(newToken);
+        newToken = TextUtil.encodeBase64(newToken);
         user.setToken(newToken);
-        return  Hib.query(session -> {
-            session.saveOrUpdate(user);
-            return user;
-        });
+        return update(user);
     }
 
     /**
      * 对密码进行加密操作
+     *
      * @param password
      * @return
      */
-    private static String  encodePassword(String password){
-        password=password.trim();//去空格
-        password=TextUtil.getMD5(password);//进行MD5非对称加密，加盐更安全，盐也要存储
+    private static String encodePassword(String password) {
+        password = password.trim();//去空格
+        password = TextUtil.getMD5(password);//进行MD5非对称加密，加盐更安全，盐也要存储
         //在进行一次对称的Base64加密，可以加盐
         return TextUtil.encodeBase64(password);
     }

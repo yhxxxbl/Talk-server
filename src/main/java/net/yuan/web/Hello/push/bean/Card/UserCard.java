@@ -19,7 +19,7 @@ public class UserCard {
     @Expose
     private int sex=0;
     @Expose
-    private LocalDateTime modiftAt=LocalDateTime.now();
+    private LocalDateTime modiftAt;
     @Expose
     private  int follows;//用户粉丝的数量
     @Expose
@@ -27,7 +27,8 @@ public class UserCard {
     @Expose
     private boolean isFollow;
 
-    public UserCard(final User user){
+    public UserCard(final User user,boolean isFollow){
+        this.isFollow=isFollow;
         this.id=user.getId();
         this.name=user.getName();
         this.phone=user.getPhone();
@@ -35,6 +36,9 @@ public class UserCard {
         this.desc=user.getDescription();
         this.sex=user.getSex();
         this.modiftAt=user.getUpdateAt();
+    }
+    public UserCard(final User user){
+        this(user,false);
     }
 
     public String getId() {

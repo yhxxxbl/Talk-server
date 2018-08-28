@@ -13,8 +13,9 @@ import javax.smartcardio.Card;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
+//127.0.0.1/api/account
 @Path("/account")
-public class AccountService {
+public class AccountService extends BaseService {
     @POST
     @Path("/login")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -35,8 +36,8 @@ public class AccountService {
             //登录失败
             return ResponseModel.buildLoginError();
         }
-
     }
+
     @POST
     @Path("/register")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -80,21 +81,17 @@ public class AccountService {
         @Produces(MediaType.APPLICATION_JSON)
         //从请求头中获取token字段
         //pushid从url地址中获取
-        public ResponseModel<AccountRspModel> bing(@HeaderParam("token") String token,@PathParam("pushId") String pushId) {
+        public ResponseModel<AccountRspModel> bind(@HeaderParam("token") String token,
+                                                   @PathParam("pushId") String pushId) {
             if (Strings.isNullOrEmpty(pushId)
                     ||Strings.isNullOrEmpty(token)){
                 //返回参数异常
                 return ResponseModel.buildParameterError();
             }
             //拿到自己的个人信息
-            User user=UserFactory.findTokenByPhone(token);
-            if (user!=null){
-                return bind(user,pushId);
-            }else {
-                //登录失败
-                return ResponseModel.buildAccountError();
-            }
-
+          //  User user=UserFactory.findTokenByPhone(token);
+            User self=getself();
+                return bind(self,pushId);
         }
 
     /**
@@ -103,7 +100,6 @@ public class AccountService {
      * @param pushId
      * @return  user
      */
-
         private ResponseModel<AccountRspModel> bind(User self,String pushId){
 
                User user=UserFactory.bindPushId(self,pushId);
